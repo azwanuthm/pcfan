@@ -46,7 +46,8 @@ function makeSectionWire(oc, u, p) {
   }
 
   const splineBuilder = new oc.GeomAPI_PointsToBSpline_2(arr, 3, 8, oc.GeomAbs_Shape.GeomAbs_C2, 1e-3);
-  const curve = splineBuilder.Curve();
+  const bspline = splineBuilder.Curve();
+  const curve = new oc.Handle_Geom_Curve_2(bspline.get());
   const edge = new oc.BRepBuilderAPI_MakeEdge_24(curve).Edge();
   const wire = new oc.BRepBuilderAPI_MakeWire_2(edge).Wire();
 
