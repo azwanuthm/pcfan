@@ -1,4 +1,4 @@
-// Konduktor utama: menyambungkan UI kepada semua modul projek
+// Konduktor utama: menyambungkan UI kepada semua modul projek (Sistem 2-Workspace)
 import * as THREE from 'three';
 import { STLExporter } from 'three/examples/jsm/exporters/STLExporter.js';
 import { OBJExporter } from 'three/examples/jsm/exporters/OBJExporter.js';
@@ -7,11 +7,14 @@ import { PRESETS } from './presets.js';
 import { getGlobalMetrics } from './aeroMath.js';
 import { createViewer } from './viewer3D.js';
 import { rebuildFan3D } from './fanBuilder.js';
+import { rebuildShroud3D, gcd } from './shroudBuilder.js';
 import { drawCharts2D } from './charts2D.js';
 import { buildReportText, initParamExporter } from './paramExporter.js';
 
 const $ = (id) => document.getElementById(id);
 const viewer = createViewer($('canvasWrap'));
+
+let activeWorkspace = 'rotor';
 
 function readParams() {
   return {
@@ -41,6 +44,17 @@ function readParams() {
     shaftBore: Number($('inpShaftBore').value),
     heatLoadW: Number($('inpHeatLoad').value),
     deltaTAir: Number($('inpDeltaT').value)
+  };
+}
+
+function readShroudParams() {
+  return {
+    frameMode: $('selFrameMode').value,
+    strutCount: Number($('inpStrutCount').value),
+    strutSweepDeg: Number($('inpStrutSweep').value),
+    strutWidth: Number($('inpStrutWidth').value),
+    strutDepth: Number($('inpStrutDepth').value),
+    showGhostRotor: $('chkGhostRotor').checked
   };
 }
 
@@ -75,6 +89,9 @@ function syncLabels(p) {
 
 function updateAll() {
   const p = readParams();
+  const sp = readShroudParams();
+  const isShroud = activeWorkspace === 'shroud';
+
   syncLabels(p);
 
   const m = getGlobalMetrics(p);
@@ -95,13 +112,37 @@ function updateAll() {
   marginEl.textContent = `${m.thermalMarginPct >= 0 ? '+' : ''}${m.thermalMarginPct.toFixed(0)}%`;
   marginEl.className = m.thermalMarginPct >= 0 ? 'font-bold text-emerald-400' : 'font-bold text-rose-400';
 
-  // Kemas kini 3D & 2D
+  // Kemas kini label Workspace 2 (Shroud & Stator)
+  $('valStrutCount').textContent = sp.strutCount;
+  $('valStrutSweep').textContent = `${sp.strutSweepDeg}°`;
+  $('valStrutWidth').textContent = `${sp.strutWidth.toFixed(1)} mm`;
+  $('valStrutDepth').textContent = `${sp.strutDepth.toFixed(1)} mm`;
+  $('wrapStatorControls').classList.toggle('hidden', sp.frameMode === 'gpu');
+
+  // Semakan Coprime (Z vs S)
+  const isNotCoprime = sp.frameMode !== 'gpu' && gcd(p.blades, sp.strutCount) > 1;
+  $('coprimeWarn').classList.toggle('hidden', !isNotCoprime);
+
+  // Dimensi Auto-Sync
+  $('syncFrame').textContent = `${p.frameSize}×${p.frameDepth}`;
+  $('syncBore').textContent = `${(m.diameterMm + 2 * p.tipClearance).toFixed(1)} mm`;
+  $('syncGap').textContent = `${p.tipClearance.toFixed(1)} mm`;
+  $('syncBlades').textContent = p.blades;
+
+  // Kemas kini 3D Rotor & Shroud
   rebuildFan3D(p, viewer, {
-    showRibs: $('chkRibs').checked,
-    showFrame: $('chkFrame').checked,
+    showRibs: !isShroud && $('chkRibs').checked,
+    showFrame: false,
     showAxis: $('chkAxis').checked
   });
+  viewer.rotorGroup.visible = !isShroud || sp.showGhostRotor;
 
+  rebuildShroud3D(p, sp, viewer, {
+    visible: isShroud || $('chkFrame').checked,
+    solidMode: isShroud
+  });
+
+  // Kemas kini graf 2D
   const stationU = Number($('selStation').value);
   drawCharts2D(p, stationU, $('canvasAirfoil'), $('canvasTriangle'), $('stationBadge'));
 }
@@ -127,8 +168,11 @@ let cadWorker = null;
 function setStepBusy(busy, msg = '') {
   $('btnExportBladeSTEP').disabled = busy;
   $('btnExportRotorSTEP').disabled = busy;
+  $('btnExportShroudSTEP').disabled = busy;
   $('cadStatus').textContent = msg;
-  $('cadStatus').classList.toggle('hidden', !msg);
+  $('cadStatus').classList.toggle('hidden', !msg || activeWorkspace !== 'rotor');
+  $('shroudCadStatus').textContent = msg;
+  $('shroudCadStatus').classList.toggle('hidden', !msg || activeWorkspace !== 'shroud');
 }
 
 function requestSTEP(mode, prefix) {
@@ -148,8 +192,29 @@ function requestSTEP(mode, prefix) {
       setStepBusy(false);
     }
   };
-  cadWorker.postMessage({ mode, params: readParams() });
+  cadWorker.postMessage({ mode, params: readParams(), shroudParams: readShroudParams() });
 }
+
+// --- Penukar Workspace (Tab) ---
+function switchWorkspace(ws) {
+  activeWorkspace = ws;
+  const isRotor = ws === 'rotor';
+  $('wsRotor').classList.toggle('hidden', !isRotor);
+  $('wsShroud').classList.toggle('hidden', isRotor);
+  $('wsShroud').classList.toggle('flex', !isRotor);
+
+  $('tabRotor').className = isRotor
+    ? 'rounded-lg bg-white py-1.5 text-xs font-extrabold text-sky-700 shadow-sm'
+    : 'rounded-lg py-1.5 text-xs font-bold text-slate-600 hover:text-slate-900';
+  $('tabShroud').className = !isRotor
+    ? 'rounded-lg bg-white py-1.5 text-xs font-extrabold text-sky-700 shadow-sm'
+    : 'rounded-lg py-1.5 text-xs font-bold text-slate-600 hover:text-slate-900';
+
+  updateAll();
+}
+
+$('tabRotor').addEventListener('click', () => switchWorkspace('rotor'));
+$('tabShroud').addEventListener('click', () => switchWorkspace('shroud'));
 
 // --- Event Listeners ---
 let debounceTimer;
@@ -211,7 +276,7 @@ document.querySelectorAll('.view-btn').forEach((btn) => {
   });
 });
 
-// Butang Eksport CAD & Mesh
+// Butang Eksport CAD & Mesh (Rotor)
 $('btnExportBladeSTEP').addEventListener('click', () => requestSTEP('blade', 'Bilah'));
 $('btnExportRotorSTEP').addEventListener('click', () => requestSTEP('rotor', 'Rotor'));
 
@@ -234,6 +299,14 @@ $('btnExportRotorOBJ').addEventListener('click', () => {
   viewer.rotorGroup.updateMatrixWorld(true);
   const txt = new OBJExporter().parse(viewer.rotorGroup);
   downloadBlob(new Blob([txt], { type: 'text/plain' }), `${getBaseName('Rotor')}.obj`);
+});
+
+// Butang Eksport CAD & Mesh (Shroud / Stator)
+$('btnExportShroudSTEP').addEventListener('click', () => requestSTEP('shroud', 'Shroud'));
+$('btnExportShroudSTL').addEventListener('click', () => {
+  viewer.frameVisualGroup.updateMatrixWorld(true);
+  const bin = new STLExporter().parse(viewer.frameVisualGroup, { binary: true });
+  downloadBlob(new Blob([bin], { type: 'model/stl' }), `${getBaseName('Shroud')}.stl`);
 });
 
 // Modal Rekod Parameter
