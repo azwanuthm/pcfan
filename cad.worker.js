@@ -1,8 +1,9 @@
 // Web Worker Enjin CAD (.STEP) berasaskan OpenCascade / Replicad
 import opencascade from 'replicad-opencascadejs/src/replicad_single.js';
 import opencascadeWasm from 'replicad-opencascadejs/src/replicad_single.wasm?url';
-import { setOC, makeCylinder, cast, makeLine, assembleWire } from 'replicad';
+import { setOC, makeCylinder, cast, makeLine, assembleWire, draw, drawRoundedRectangle } from 'replicad';
 import { getRadii, getStationAero, getSweep, generateThinAirfoil, getGlobalMetrics } from './aeroMath.js';
+import { getMountSpec, getStrutPolygon2D } from './shroudBuilder.js';
 
 let ocReady = null;
 
