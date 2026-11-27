@@ -27,8 +27,8 @@ function getSection3DPoints(u, p, nPts = 28) {
   const r = st.rMm;
 
   return loop2D.map(({ x, y }) => {
-    const tang = x * cosT - y * sinT + sweep;
-    const axial = x * sinT + y * cosT;
+    const tang = -x * cosT - y * sinT + sweep;
+    const axial = x * sinT - y * cosT;
     const angle = tang / r;
     return new THREE.Vector3(r * Math.cos(angle), r * Math.sin(angle), axial);
   });
