@@ -169,13 +169,13 @@ export function rebuildFan3D(p, viewer, opts) {
   const m = getGlobalMetrics(p);
 
   const bladeMat = new THREE.MeshStandardMaterial({
-    color: '#334155',
+    color: '#475569',
     roughness: 0.38,
     metalness: 0.18,
     side: THREE.DoubleSide
   });
   const hubMat = new THREE.MeshStandardMaterial({
-    color: '#1e293b',
+    color: '#64748b',
     roughness: 0.42,
     metalness: 0.25
   });
