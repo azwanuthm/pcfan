@@ -30,13 +30,14 @@ export function getChord(u, p, twistDeg) {
 
 // Lengkungan sapuan (Sweep) dalam mm (positif = arah putaran / forward sweep)
 export function getSweep(u, p) {
+  const uPos = Math.max(0, u);
   if (p.sweepMode === 'straight') return 0;
   if (p.sweepMode === 'forward') {
     // Sabit licin ke hadapan (scimitar)
-    return p.sweepAmp * Math.pow(u, 1.55);
+    return p.sweepAmp * Math.pow(uPos, 1.55);
   }
   // 'progressive': Backward di pangkal (tolak zon mati hab), Forward di hujung
-  return p.sweepAmp * (-0.45 * Math.sin(Math.PI * u) + 1.15 * Math.pow(u, 2.2));
+  return p.sweepAmp * (-0.45 * Math.sin(Math.PI * uPos) + 1.15 * Math.pow(uPos, 2.2));
 }
 
 // Analisis aerodinamik tempatan pada stesen jejari u ∈ [0, 1]
