@@ -33,6 +33,15 @@
       <p class="text-[11px] text-slate-500">Profil nipis (3–6%), had bingkai 15/25/30mm &amp; eksport .STEP/.STL.</p>
     </div>
 
+    <!-- Penukar Workspace (Tab) -->
+    <div class="grid grid-cols-2 gap-1 rounded-xl bg-slate-100 p-1 border border-slate-200">
+      <button id="tabRotor" class="rounded-lg bg-white py-1.5 text-xs font-extrabold text-sky-700 shadow-sm">1. Rotor</button>
+      <button id="tabShroud" class="rounded-lg py-1.5 text-xs font-bold text-slate-600 hover:text-slate-900">2. Shroud</button>
+    </div>
+
+    <!-- KANDUNGAN WORKSPACE 1: ROTOR -->
+    <div id="wsRotor" class="flex flex-col gap-3">
+      
     <!-- 1. Pratetap Rujukan -->
     <div class="rounded-xl bg-slate-50 p-2.5 border border-slate-200">
       <div class="text-xs font-bold text-slate-700 mb-1.5">1. Pratetap Rujukan Industri</div>
@@ -224,6 +233,68 @@
         </div>
       </details>
     </div>
+    </div>
+    </div> <!-- Tamat #wsRotor -->
+
+    <!-- KANDUNGAN WORKSPACE 2: SHROUD & STATOR -->
+    <div id="wsShroud" class="hidden flex-col gap-3">
+      <div class="rounded-xl bg-sky-50/70 p-2.5 border border-sky-200/80 space-y-2">
+        <div class="text-xs font-bold text-sky-900">Dimensi Segerak (Auto-Sync)</div>
+        <div class="grid grid-cols-2 gap-1.5 text-[11px] font-mono bg-white rounded-lg p-2 border border-sky-100">
+          <div>Bingkai: <strong id="syncFrame">120×25</strong></div>
+          <div>Bore: <strong id="syncBore">114.0</strong></div>
+          <div>Tip Gap: <strong id="syncGap">0.5 mm</strong></div>
+          <div>Bilah (Z): <strong id="syncBlades">9</strong></div>
+        </div>
+        <p class="text-[10px] text-slate-500">Dimensi ini dikunci mengikut tetapan Rotor supaya padanan sentiasa tepat.</p>
+      </div>
+
+      <div class="rounded-xl border border-slate-200 p-2.5 space-y-2.5">
+        <div class="text-xs font-bold text-slate-800">Konfigurasi Bingkai &amp; Stator</div>
+        <div>
+          <label class="text-[11px] font-semibold text-slate-600">Mod Bingkai</label>
+          <select id="selFrameMode" class="mt-0.5 w-full rounded-lg border border-slate-300 bg-white px-2 py-1 text-xs font-bold">
+            <option value="chassis" selected>Bingkai Casis / Radiator (Dengan Stator)</option>
+            <option value="gpu">Shroud GPU (Tanpa Topang Stator)</option>
+          </select>
+        </div>
+
+        <div id="wrapStatorControls" class="space-y-2 pt-1 border-t border-slate-100">
+          <div>
+            <div class="flex justify-between text-[11px]"><span>Bilangan Topang Stator (S):</span><strong id="valStrutCount">4</strong></div>
+            <input id="inpStrutCount" type="range" min="3" max="5" step="1" value="4" class="w-full accent-sky-600" />
+          </div>
+          <div id="coprimeWarn" class="hidden rounded-lg bg-rose-50 border border-rose-200 px-2 py-1.5 text-[10.5px] font-semibold text-rose-700">
+            ⚠ Amaran Akustik: Nisbah Bilah (Z) &amp; Topang (S) bukan <em>coprime</em>. Risiko hingar BPF tinggi!
+          </div>
+          <div>
+            <div class="flex justify-between text-[11px]"><span>Lengkungan Topang (Sweep):</span><strong id="valStrutSweep">20°</strong></div>
+            <input id="inpStrutSweep" type="range" min="0" max="35" step="1" value="20" class="w-full accent-sky-600" />
+          </div>
+          <div>
+            <div class="flex justify-between text-[11px]"><span>Lebar Topang:</span><strong id="valStrutWidth">3.4 mm</strong></div>
+            <input id="inpStrutWidth" type="range" min="2.0" max="6.0" step="0.2" value="3.4" class="w-full accent-sky-600" />
+          </div>
+          <div>
+            <div class="flex justify-between text-[11px]"><span>Tebal Paksi Stator:</span><strong id="valStrutDepth">3.2 mm</strong></div>
+            <input id="inpStrutDepth" type="range" min="1.8" max="6.0" step="0.2" value="3.2" class="w-full accent-sky-600" />
+          </div>
+        </div>
+      </div>
+
+      <div class="space-y-1 text-[11px] font-medium text-slate-700 px-1">
+        <label class="flex items-center gap-2 cursor-pointer">
+          <input id="chkGhostRotor" type="checkbox" checked class="accent-sky-600" /> Papar Rotor Rujukan (Semak Kelegaan)
+        </label>
+      </div>
+
+      <div class="pt-2 border-t border-slate-200 space-y-1.5">
+        <div class="text-[11px] font-bold text-slate-800">Eksport Pepejal Shroud / Bingkai</div>
+        <button id="btnExportShroudSTEP" class="w-full rounded-lg bg-slate-800 py-2 text-xs font-bold text-white hover:bg-slate-900 disabled:opacity-50">STEP: Shroud + Stator (CAD / SWFS)</button>
+        <div id="shroudCadStatus" class="hidden rounded-lg bg-indigo-50 px-2 py-1 text-center text-[10.5px] font-semibold text-indigo-700"></div>
+        <button id="btnExportShroudSTL" class="w-full rounded-lg border border-slate-300 bg-white py-1.5 text-[11px] font-bold text-slate-700 hover:bg-slate-50">STL: Shroud (Cetakan 3D)</button>
+      </div>
+    </div> <!-- Tamat #wsShroud -->
   </aside>
 
   <!-- Panel Kanan Atas: Graf 2D -->
