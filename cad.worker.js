@@ -18,41 +18,32 @@ async function initCAD() {
   return ocReady;
 }
 
-// Bina dawai tertutup (BSpline 3D) bagi satu keratan bilah pada stesen u
+// Bina dawai tertutup bagi satu keratan bilah pada stesen u
 function makeSectionWire(oc, u, p) {
   const st = getStationAero(u, p);
   const camber = p.camberRoot + (p.camberTip - p.camberRoot) * u;
   const thick = p.thickRoot + (p.thickTip - p.thickRoot) * u;
   const sweep = getSweep(u, p);
 
-  // 18 titik per permukaan sudah cukup halus & pantas untuk NURBS
   const loop2D = generateThinAirfoil(st.chord, camber, thick, p.teMin, 18);
   const twistRad = (st.twistDeg * Math.PI) / 180;
   const cosT = Math.cos(twistRad);
   const sinT = Math.sin(twistRad);
   const r = st.rMm;
 
-  const n = loop2D.length;
-  const arr = new oc.TColgp_Array1OfPnt_2(1, n + 1);
-
-  for (let i = 0; i < n; i++) {
+  const poly = new oc.BRepBuilderAPI_MakePolygon_1();
+  for (let i = 0; i < loop2D.length; i++) {
     const { x, y } = loop2D[i];
     const tang = x * cosT - y * sinT + sweep;
     const axial = x * sinT + y * cosT;
     const angle = tang / r;
     const pnt = new oc.gp_Pnt_3(r * Math.cos(angle), r * Math.sin(angle), axial);
-    arr.SetValue(i + 1, pnt);
-    if (i === 0) arr.SetValue(n + 1, pnt); // tutup gelung
+    poly.Add_1(pnt);
+    pnt.delete();
   }
-
-  const splineBuilder = new oc.GeomAPI_PointsToBSpline_2(arr, 3, 8, oc.GeomAbs_Shape.GeomAbs_C2, 1e-3);
-  const bspline = splineBuilder.Curve();
-  const curve = new oc.Handle_Geom_Curve_2(bspline.get());
-  const edge = new oc.BRepBuilderAPI_MakeEdge_24(curve).Edge();
-  const wire = new oc.BRepBuilderAPI_MakeWire_2(edge).Wire();
-
-  arr.delete();
-  splineBuilder.delete();
+  poly.Close();
+  const wire = poly.Wire();
+  poly.delete();
   return wire;
 }
 
