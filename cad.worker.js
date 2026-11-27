@@ -32,8 +32,8 @@ function makeSectionWire(oc, u, p) {
   const r = st.rMm;
 
   const pts = loop2D.map(({ x, y }) => {
-    const tang = x * cosT - y * sinT + sweep;
-    const axial = x * sinT + y * cosT;
+    const tang = -x * cosT - y * sinT + sweep;
+    const axial = x * sinT - y * cosT;
     const angle = tang / r;
     return [r * Math.cos(angle), r * Math.sin(angle), axial];
   });
