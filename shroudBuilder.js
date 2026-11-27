@@ -75,12 +75,12 @@ export function rebuildShroud3D(p, sp, viewer, { visible, solidMode }) {
   const { pitch, holeR } = getMountSpec(p.frameSize);
   const hp = pitch / 2;
 
-  const frameMat = solidMode
+const frameMat = solidMode
     ? new THREE.MeshPhysicalMaterial({
-        color: '#334155',
-        roughness: 0.35,
-        metalness: 0.15,
-        clearcoat: 0.2
+        color: '#cbd5e1', // Kelabu cerah ala CAD (senang nampak lubang & topang)
+        roughness: 0.45,
+        metalness: 0.1,
+        clearcoat: 0.1
       })
     : new THREE.MeshPhysicalMaterial({
         color: '#64748b',
