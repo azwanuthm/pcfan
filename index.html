@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Penjana Kipas Paksi Skala Kecil (PC / GPU / Elektronik)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { margin: 0; overflow: hidden; font-family: Inter, system-ui, sans-serif; }
+    #canvasWrap { position: fixed; inset: 0; }
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 99px; }
+  </style>
+</head>
+<body class="bg-slate-100 text-slate-800 select-none">
+
+  <!-- Kanvas 3D Skrin Penuh -->
+  <div id="canvasWrap"></div>
+
+  <!-- Bar Sudut Pandangan Pantas (Atas Tengah) -->
+  <div class="fixed top-4 left-1/2 -translate-x-1/2 z-20 flex items-center gap-1 rounded-full bg-white/90 px-2 py-1.5 shadow-lg backdrop-blur border border-slate-200">
+    <button data-view="iso" class="view-btn rounded-full px-3 py-1 text-xs font-bold text-slate-700 hover:bg-sky-50 hover:text-sky-700">Isometrik</button>
+    <button data-view="front" class="view-btn rounded-full px-3 py-1 text-xs font-bold text-slate-700 hover:bg-sky-50 hover:text-sky-700">Depan</button>
+    <button data-view="side" class="view-btn rounded-full px-3 py-1 text-xs font-bold text-slate-700 hover:bg-sky-50 hover:text-sky-700">Sisi</button>
+    <button data-view="top" class="view-btn rounded-full px-3 py-1 text-xs font-bold text-slate-700 hover:bg-sky-50 hover:text-sky-700">Atas</button>
+  </div>
+
+  <!-- Panel Kawalan Kiri -->
+  <aside class="fixed top-3 left-3 bottom-3 z-20 w-[320px] overflow-y-auto rounded-2xl bg-white/95 p-4 shadow-xl backdrop-blur border border-slate-200 flex flex-col gap-3">
+    <div>
+      <span class="inline-block rounded-full bg-sky-100 px-2.5 py-0.5 text-[10px] font-extrabold uppercase tracking-wider text-sky-700">Low-Re • 40–140mm</span>
+      <h1 class="mt-1 text-lg font-extrabold text-slate-900 leading-tight">Penjana Kipas PC &amp; Elektronik</h1>
+      <p class="text-[11px] text-slate-500">Profil nipis (3–6%), had bingkai 15/25/30mm &amp; eksport .STEP/.STL.</p>
+    </div>
+
+    <!-- 1. Pratetap Rujukan -->
+    <div class="rounded-xl bg-slate-50 p-2.5 border border-slate-200">
+      <div class="text-xs font-bold text-slate-700 mb-1.5">1. Pratetap Rujukan Industri</div>
+      <div class="grid grid-cols-2 gap-1.5">
+        <button data-preset="noctua120" class="preset-btn rounded-lg border border-slate-200 bg-white px-2 py-1.5 text-[11px] font-bold text-slate-700 hover:border-sky-400 hover:bg-sky-50">Hybrid 120mm</button>
+        <button data-preset="t30_120" class="preset-btn rounded-lg border border-slate-200 bg-white px-2 py-1.5 text-[11px] font-bold text-slate-700 hover:border-sky-400 hover:bg-sky-50">Radiator 30mm</button>
+        <button data-preset="gpu92" class="preset-btn rounded-lg border border-slate-200 bg-white px-2 py-1.5 text-[11px] font-bold text-slate-700 hover:border-sky-400 hover:bg-sky-50">GPU 92mm (Ring)</button>
+        <button data-preset="mini60" class="preset-btn rounded-lg border border-slate-200 bg-white px-2 py-1.5 text-[11px] font-bold text-slate-700 hover:border-sky-400 hover:bg-sky-50">Mini 60mm (SLA)</button>
+      </div>
+      <p id="presetNote" class="mt-1.5 text-[10.5px] text-slate-500 leading-snug"></p>
+    </div>
+
+    <!-- 2. Piawaian Bingkai & Had Paksi -->
+    <div class="rounded-xl bg-sky-50/70 p-2.5 border border-sky-200/80 space-y-2">
+      <div class="text-xs font-bold text-sky-900">2. Piawaian Bingkai &amp; Hab</div>
+      <div class="grid grid-cols-2 gap-2">
+        <div>
+          <label class="text-[11px] font-semibold text-slate-600">Saiz Bingkai</label>
+          <select id="selFrameSize" class="mt-0.5 w-full rounded-lg border border-slate-300 bg-white px-2 py-1 text-xs font-bold">
+            <option value="40">40 mm</option>
+            <option value="60">60 mm</option>
+            <option value="80">80 mm</option>
+            <option value="92">92 mm</option>
+            <option value="120" selected>120 mm</option>
+            <option value="140">140 mm</option>
+          </select>
+        </div>
+        <div>
+          <label class="text-[11px] font-semibold text-slate-600">Ketebalan (Depth)</label>
+          <select id="selFrameDepth" class="mt-0.5 w-full rounded-lg border border-slate-300 bg-white px-2 py-1 text-xs font-bold">
+            <option value="15">15 mm (Slim)</option>
+            <option value="25" selected>25 mm (Std)</option>
+            <option value="30">30 mm (Perf)</option>
+          </select>
+        </div>
+      </div>
+
+      <div>
+        <div class="flex justify-between text-[11px]"><span>Kelegaan Hujung (Tip Gap):</span><strong id="valTipClearance">0.5 mm</strong></div>
+        <input id="inpTipClearance" type="range" min="0.3" max="2.5" step="0.1" value="0.5" class="w-full accent-sky-600" />
+      </div>
+      <div>
+        <div class="flex justify-between text-[11px]"><span>Nisbah Hab (dh/dt):</span><strong id="valHubRatio">0.38</strong></div>
+        <input id="inpHubRatio" type="range" min="0.28" max="0.50" step="0.01" value="0.38" class="w-full accent-sky-600" />
+      </div>
+      <div>
+        <div class="flex justify-between text-[11px]"><span>Bilangan Bilah (Z):</span><strong id="valBlades">9</strong></div>
+        <input id="inpBlades" type="range" min="5" max="13" step="1" value="9" class="w-full accent-sky-600" />
+      </div>
+    </div>
+
+    <!-- 3. Titik Operasi & Beban Haba -->
+    <details open class="rounded-xl border border-slate-200 p-2.5">
+      <summary class="cursor-pointer text-xs font-bold text-slate-800">3. Titik Operasi &amp; Beban Haba</summary>
+      <div class="mt-2 space-y-2">
+        <div>
+          <div class="flex justify-between text-[11px]"><span>Kelajuan Motor (RPM):</span><strong id="valRPM">1800 rpm</strong></div>
+          <input id="inpRPM" type="range" min="600" max="5000" step="50" value="1800" class="w-full accent-sky-600" />
+        </div>
+        <div>
+          <div class="flex justify-between text-[11px]"><span>Sasaran Halaju (Vz):</span><strong id="valVz">3.2 m/s</strong></div>
+          <input id="inpVz" type="range" min="0.8" max="10.0" step="0.1" value="3.2" class="w-full accent-sky-600" />
+        </div>
+        <label class="flex items-center gap-2 text-[11px] font-semibold text-sky-800 cursor-pointer">
+          <input id="chkAutoTwist" type="checkbox" checked class="accent-sky-600" /> Mod Auto-Twist (Free Vortex)
+        </label>
+        <div id="wrapAoA">
+          <div class="flex justify-between text-[11px]"><span>Sudut Serangan (α):</span><strong id="valAoA">5.5°</strong></div>
+          <input id="inpAoA" type="range" min="2.0" max="10.0" step="0.5" value="5.5" class="w-full accent-sky-600" />
+        </div>
+        <div id="wrapManualTwist" class="hidden space-y-1.5">
+          <div>
+            <div class="flex justify-between text-[11px]"><span>Root Twist:</span><strong id="valRootTwist">48°</strong></div>
+            <input id="inpRootTwist" type="range" min="15" max="65" step="1" value="48" class="w-full accent-sky-600" />
+          </div>
+          <div>
+            <div class="flex justify-between text-[11px]"><span>Tip Twist:</span><strong id="valTipTwist">20°</strong></div>
+            <input id="inpTipTwist" type="range" min="10" max="45" step="1" value="20" class="w-full accent-sky-600" />
+          </div>
+        </div>
+        <div class="pt-1.5 border-t border-slate-200 grid grid-cols-2 gap-2">
+          <div>
+            <div class="flex justify-between text-[10.5px]"><span>Beban Haba:</span><strong id="valHeatLoad">65 W</strong></div>
+            <input id="inpHeatLoad" type="range" min="10" max="250" step="5" value="65" class="w-full accent-orange-500" />
+          </div>
+          <div>
+            <div class="flex justify-between text-[10.5px]"><span>Had ΔT Udara:</span><strong id="valDeltaT">12 °C</strong></div>
+            <input id="inpDeltaT" type="range" min="5" max="25" step="1" value="12" class="w-full accent-orange-500" />
+          </div>
+        </div>
+      </div>
+    </details>
+
+    <!-- 4. Geometri Bilah Low-Re & Barrier Ring -->
+    <details class="rounded-xl border border-slate-200 p-2.5">
+      <summary class="cursor-pointer text-xs font-bold text-slate-800">4. Profil Bilah Nipis &amp; Barrier Ring</summary>
+      <div class="mt-2 space-y-2">
+        <div>
+          <div class="flex justify-between text-[11px]"><span>Kord Pangkal (Root):</span><strong id="valRootChord">24 mm</strong></div>
+          <input id="inpRootChord" type="range" min="8" max="45" step="1" value="24" class="w-full accent-sky-600" />
+        </div>
+        <div id="clampWarn" class="hidden rounded-lg bg-amber-50 border border-amber-200 px-2 py-1 text-[10px] font-semibold text-amber-800">
+          ℹ Kord dihadkan automatik supaya muat dalam ketebalan bingkai.
+        </div>
+        <div>
+          <div class="flex justify-between text-[11px]"><span>Kembangan (Taper):</span><strong id="valTaper">1.25 x</strong></div>
+          <input id="inpTaper" type="range" min="0.70" max="1.80" step="0.05" value="1.25" class="w-full accent-sky-600" />
+        </div>
+        <div>
+          <div class="flex justify-between text-[11px]"><span>Mid-Bulge:</span><strong id="valMidBulge">0.25 x</strong></div>
+          <input id="inpMidBulge" type="range" min="0.00" max="0.65" step="0.05" value="0.25" class="w-full accent-sky-600" />
+        </div>
+        <div>
+          <label class="text-[11px] font-semibold text-slate-600">Mod Sapuan (Sweep)</label>
+          <select id="selSweepMode" class="mt-0.5 w-full rounded-lg border border-slate-300 bg-white px-2 py-1 text-xs">
+            <option value="progressive" selected>Progressive Bend (Noctua G2)</option>
+            <option value="forward">Forward Sweep (Sabit)</option>
+            <option value="straight">Lurus (Straight)</option>
+          </select>
+        </div>
+        <div>
+          <div class="flex justify-between text-[11px]"><span>Amplitud Sapuan:</span><strong id="valSweepAmp">10 mm</strong></div>
+          <input id="inpSweepAmp" type="range" min="0" max="22" step="1" value="10" class="w-full accent-sky-600" />
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <div class="flex justify-between text-[10.5px]"><span>Camber Root:</span><strong id="valCamberRoot">8.5%</strong></div>
+            <input id="inpCamberRoot" type="range" min="3" max="12" step="0.5" value="8.5" class="w-full accent-sky-600" />
+          </div>
+          <div>
+            <div class="flex justify-between text-[10.5px]"><span>Camber Tip:</span><strong id="valCamberTip">5.0%</strong></div>
+            <input id="inpCamberTip" type="range" min="2" max="10" step="0.5" value="5.0" class="w-full accent-sky-600" />
+          </div>
+          <div>
+            <div class="flex justify-between text-[10.5px]"><span>Tebal Root:</span><strong id="valThickRoot">6.0%</strong></div>
+            <input id="inpThickRoot" type="range" min="3" max="9" step="0.5" value="6.0" class="w-full accent-sky-600" />
+          </div>
+          <div>
+            <div class="flex justify-between text-[10.5px]"><span>Tebal Tip:</span><strong id="valThickTip">3.5%</strong></div>
+            <input id="inpThickTip" type="range" min="2.5" max="7" step="0.5" value="3.5" class="w-full accent-sky-600" />
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <div class="flex justify-between text-[10.5px]"><span>Min. TE (SLA):</span><strong id="valTEMin">0.5 mm</strong></div>
+            <input id="inpTEMin" type="range" min="0.3" max="1.2" step="0.1" value="0.5" class="w-full accent-sky-600" />
+          </div>
+          <div>
+            <div class="flex justify-between text-[10.5px]"><span>Lubang Aci:</span><strong id="valShaftBore">3.0 mm</strong></div>
+            <input id="inpShaftBore" type="range" min="0" max="8" step="0.5" value="3.0" class="w-full accent-sky-600" />
+          </div>
+        </div>
+        <div class="pt-1.5 border-t border-slate-200 space-y-1.5">
+          <label class="flex items-center gap-2 text-[11px] font-bold text-sky-800 cursor-pointer">
+            <input id="chkBarrierRing" type="checkbox" class="accent-sky-600" /> Aktifkan Barrier Ring (Gaya GPU)
+          </label>
+          <div id="wrapRingThick" class="hidden">
+            <div class="flex justify-between text-[11px]"><span>Tebal Gelang:</span><strong id="valRingThick">1.2 mm</strong></div>
+            <input id="inpRingThick" type="range" min="0.8" max="2.5" step="0.1" value="1.2" class="w-full accent-sky-600" />
+          </div>
+        </div>
+      </div>
+    </details>
+
+    <!-- Paparan Visual -->
+    <div class="space-y-1 text-[11px] font-medium text-slate-700 px-1">
+      <label class="flex items-center gap-2 cursor-pointer"><input id="chkSpin" type="checkbox" class="accent-sky-600" /> Putarkan Rotor (Animasi)</label>
+      <label class="flex items-center gap-2 cursor-pointer"><input id="chkRibs" type="checkbox" checked class="accent-sky-600" /> Papar Keratan Bilah (Ribs)</label>
+      <label class="flex items-center gap-2 cursor-pointer"><input id="chkFrame" type="checkbox" checked class="accent-sky-600" /> Papar Bingkai Rujukan (15/25/30mm)</label>
+      <label class="flex items-center gap-2 cursor-pointer"><input id="chkAxis" type="checkbox" checked class="accent-sky-600" /> Paksi &amp; Arah Aliran</label>
+    </div>
+
+    <!-- Eksport CAD & 3D Print -->
+    <div class="pt-2 border-t border-slate-200 space-y-1.5">
+      <div class="text-[11px] font-bold text-slate-800">Eksport Pepejal CAD &amp; Cetakan 3D</div>
+      <div class="grid grid-cols-2 gap-1.5">
+        <button id="btnExportBladeSTEP" class="rounded-lg bg-indigo-600 py-1.5 text-[11px] font-bold text-white hover:bg-indigo-700 disabled:opacity-50">STEP: 1 Bilah</button>
+        <button id="btnExportRotorSTEP" class="rounded-lg bg-violet-600 py-1.5 text-[11px] font-bold text-white hover:bg-violet-700 disabled:opacity-50">STEP: Rotor</button>
+      </div>
+      <div id="cadStatus" class="hidden rounded-lg bg-indigo-50 px-2 py-1 text-center text-[10.5px] font-semibold text-indigo-700"></div>
+      <button id="btnSWFSSheet" class="w-full rounded-lg bg-emerald-600 py-1.5 text-[11px] font-bold text-white hover:bg-emerald-700">Rekod Parameter &amp; Panduan (.txt)</button>
+      <details class="text-[11px] text-slate-600">
+        <summary class="cursor-pointer font-semibold hover:text-slate-900">Eksport Mesh 3D Print (STL / OBJ)</summary>
+        <div class="mt-1.5 grid grid-cols-2 gap-1.5">
+          <button id="btnExportBladeSTL" class="rounded-md border border-slate-300 bg-white py-1 text-[10.5px] font-bold hover:bg-slate-50">STL: 1 Bilah</button>
+          <button id="btnExportRotorSTL" class="rounded-md border border-slate-300 bg-white py-1 text-[10.5px] font-bold hover:bg-slate-50">STL: Rotor (SLA)</button>
+          <button id="btnExportBladeOBJ" class="rounded-md border border-slate-300 bg-white py-1 text-[10.5px] font-bold hover:bg-slate-50">OBJ: 1 Bilah</button>
+          <button id="btnExportRotorOBJ" class="rounded-md border border-slate-300 bg-white py-1 text-[10.5px] font-bold hover:bg-slate-50">OBJ: Rotor</button>
+        </div>
+      </details>
+    </div>
+  </aside>
+
+  <!-- Panel Kanan Atas: Graf 2D -->
+  <aside class="fixed top-3 right-3 z-20 w-[275px] rounded-2xl bg-white/95 p-3 shadow-xl backdrop-blur border border-slate-200 space-y-2">
+    <div class="flex items-center justify-between gap-2">
+      <div class="text-xs font-extrabold text-slate-800">Profil Nipis &amp; Halaju</div>
+      <select id="selStation" class="rounded-lg border border-slate-300 bg-white px-2 py-0.5 text-[11px] font-semibold">
+        <option value="0.05">Pangkal (Root)</option>
+        <option value="0.5" selected>Tengah (Mid)</option>
+        <option value="0.95">Hujung (Tip)</option>
+      </select>
+    </div>
+    <div class="flex justify-end">
+      <span id="stationBadge" class="rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-bold text-emerald-700">Re = 0k</span>
+    </div>
+    <canvas id="canvasAirfoil" width="248" height="92" class="w-full rounded-xl border border-slate-200 bg-slate-50"></canvas>
+    <canvas id="canvasTriangle" width="248" height="104" class="w-full rounded-xl border border-slate-200 bg-slate-50"></canvas>
+  </aside>
+
+  <!-- Panel Kanan Bawah: Metrik Kejuruteraan, Aeroakustik & Haba -->
+  <aside class="fixed bottom-3 right-3 z-20 w-[275px] rounded-2xl bg-slate-900/95 p-3.5 text-slate-100 shadow-xl backdrop-blur border border-slate-700 font-mono text-[11px] space-y-1">
+    <div class="flex items-center justify-between border-b border-slate-700 pb-1.5 mb-1.5 font-sans">
+      <span class="font-bold text-xs text-white">Metrik Low-Re &amp; Haba</span>
+      <span id="badgeMode" class="rounded-full bg-sky-500/20 px-2 py-0.5 text-[9.5px] font-bold text-sky-300">FREE VORTEX</span>
+    </div>
+    <div class="flex justify-between"><span class="text-slate-400">Diameter Rotor</span><span id="outDiameter" class="text-sky-300 font-bold">0.0 mm</span></div>
+    <div class="flex justify-between"><span class="text-slate-400">Aliran (CFM)</span><span id="outFlowCFM" class="text-emerald-300 font-bold">0.0 CFM</span></div>
+    <div class="flex justify-between"><span class="text-slate-400">Aliran (m³/h)</span><span id="outFlowM3h" class="text-slate-200">0.0 m³/h</span></div>
+    <div class="flex justify-between"><span class="text-slate-400">Laju Hujung (Utip)</span><span id="outTipSpeed" class="text-slate-200">0.0 m/s</span></div>
+    <div class="flex justify-between"><span class="text-slate-400">Reynolds (Mid)</span><span id="outReMid" class="text-amber-300 font-bold">0</span></div>
+    <div class="flex justify-between"><span class="text-slate-400">BPF (Hingar Tonal)</span><span id="outBPF" class="text-rose-300 font-bold">0 Hz</span></div>
+    <div class="flex justify-between"><span class="text-slate-400">Solidity (Mid)</span><span id="outSolidity" class="text-slate-200">0%</span></div>
+    <div class="flex justify-between"><span class="text-slate-400">Twist Root → Tip</span><span id="outTwistRange" class="text-slate-200">0° → 0°</span></div>
+    <div class="mt-1.5 pt-1.5 border-t border-slate-700 space-y-0.5">
+      <div class="flex justify-between"><span class="text-orange-300">Aliran Perlu (Haba)</span><span id="outReqFlow" class="text-orange-200 font-bold">0.0 CFM</span></div>
+      <div class="flex justify-between"><span class="text-orange-300">Margin Penyejukan</span><span id="outThermalMargin" class="font-bold">0%</span></div>
+    </div>
+  </aside>
+
+  <!-- Modal Rekod Parameter -->
+  <div id="swfsModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-900/60 p-4 backdrop-blur-sm">
+    <div class="w-full max-w-2xl rounded-2xl bg-white p-5 shadow-2xl">
+      <div class="flex items-center justify-between border-b pb-3">
+        <h2 class="text-base font-extrabold text-slate-900">Rekod Parameter &amp; Panduan SWFS / SLA</h2>
+        <button id="btnCloseModal" class="rounded-lg px-2 py-1 text-xs font-bold text-slate-500 hover:bg-slate-100">Tutup ✕</button>
+      </div>
+      <pre id="swfsContent" class="mt-3 max-h-[60vh] overflow-y-auto rounded-xl bg-slate-900 p-4 text-xs text-slate-100 font-mono whitespace-pre-wrap"></pre>
+      <div class="mt-3 flex justify-end gap-2">
+        <button id="btnCopySWFS" class="rounded-lg border border-slate-300 px-3 py-1.5 text-xs font-bold text-slate-700 hover:bg-slate-50">Salin Teks</button>
+        <button id="btnDownloadSWFS" class="rounded-lg bg-emerald-600 px-3 py-1.5 text-xs font-bold text-white hover:bg-emerald-700">Muat Turun (.txt)</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="/main.js"></script>
+</body>
+</html>
