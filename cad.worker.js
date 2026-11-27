@@ -74,6 +74,56 @@ self.onmessage = async (e) => {
     self.postMessage({ type: 'progress', message: 'Memuatkan enjin OpenCascade...' });
     const oc = await initCAD();
 
+    if (mode === 'shroud') {
+      self.postMessage({ type: 'progress', message: 'Membina pepejal Shroud & Stator...' });
+      const { rHub, rTip } = getRadii(p);
+      const rBore = rTip + p.tipClearance;
+      const rCorner = Math.min(6, p.frameSize * 0.06);
+      const { pitch, holeR } = getMountSpec(p.frameSize);
+      const hp = pitch / 2;
+
+      let frame = drawRoundedRectangle(p.frameSize, p.frameSize, rCorner)
+        .sketchOnPlane('XY', -p.frameDepth / 2)
+        .extrude(p.frameDepth);
+
+      const bore = makeCylinder(rBore, p.frameDepth + 4, [0, 0, -p.frameDepth / 2 - 2], [0, 0, 1]);
+      frame = frame.cut(bore);
+
+      for (const [hx, hy] of [[-hp, -hp], [hp, -hp], [hp, hp], [-hp, hp]]) {
+        const hole = makeCylinder(holeR, p.frameDepth + 4, [hx, hy, -p.frameDepth / 2 - 2], [0, 0, 1]);
+        frame = frame.cut(hole);
+      }
+
+      if (sp.frameMode !== 'gpu') {
+        const strutDepth = Math.min(sp.strutDepth, p.frameDepth * 0.35);
+        const zRearStart = p.frameDepth / 2 - strutDepth;
+
+        let stator = makeCylinder(rHub * 0.92, strutDepth, [0, 0, zRearStart], [0, 0, 1]);
+        if (p.shaftBore > 0.5 && p.shaftBore / 2 < rHub * 0.7) {
+          const sb = makeCylinder(p.shaftBore / 2, strutDepth + 4, [0, 0, zRearStart - 2], [0, 0, 1]);
+          stator = stator.cut(sb);
+        }
+        frame = frame.fuse(stator);
+
+        const pts = getStrutPolygon2D(rHub, rBore, sp.strutWidth, sp.strutSweepDeg, 16);
+        let pen = draw(pts[0]);
+        for (let i = 1; i < pts.length; i++) pen = pen.lineTo(pts[i]);
+        const baseStrut = pen.close().sketchOnPlane('XY', zRearStart).extrude(strutDepth);
+
+        for (let i = 0; i < sp.strutCount; i++) {
+          const deg = (i * 360) / sp.strutCount;
+          const st = i === 0 ? baseStrut : baseStrut.clone().rotate(deg, [0, 0, 0], [0, 0, 1]);
+          frame = frame.fuse(st);
+        }
+      }
+
+      self.postMessage({ type: 'progress', message: 'Mengeksport fail .STEP Shroud...' });
+      const blob = frame.blobSTEP();
+      const buffer = await blob.arrayBuffer();
+      self.postMessage({ type: 'done', buffer }, [buffer]);
+      return;
+    }
+    
     self.postMessage({ type: 'progress', message: 'Menjana permukaan NURBS bilah...' });
     const blade = buildBladeSolid(oc, p);
 
