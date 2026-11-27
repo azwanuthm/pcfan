@@ -79,28 +79,38 @@ export function getStationAero(u, p) {
   };
 }
 
-// Penjana koordinat 2D profil Thin Circular-Arc (Low-Re: tebal 3% - 6%)
-// Mengembalikan titik tertutup dari TE -> permukaan atas -> LE -> permukaan bawah -> TE
+// Penjana koordinat 2D profil Thin Circular-Arc dengan hidung bulat (NACA thickness)
 export function generateThinAirfoil(chord, camberPct, thickPct, teMinMm, nPts = 28) {
-  const f = (camberPct / 100) * chord;       // tinggi camber maksimum
+  const f = (camberPct / 100) * chord;
   const tMax = Math.max(teMinMm, (thickPct / 100) * chord);
   const upper = [];
   const lower = [];
 
   for (let i = 0; i <= nPts; i++) {
-    // Taburan kosinus supaya LE & TE lebih halus
+    // Taburan kosinus: titik lebih rapat di Leading Edge & Trailing Edge
     const beta = (i / nPts) * Math.PI;
-    const xNorm = 0.5 * (1 - Math.cos(beta)); // 0 (LE) -> 1 (TE)
-    const x = (xNorm - 0.5) * chord;          // pusat pada 50% kord
+    const xNorm = 0.5 * (1 - Math.cos(beta));
+    const x = (xNorm - 0.5) * chord;
 
-    // Garis camber parabola (hampiran tepat arka bulat untuk camber < 12%)
+    // Garis camber arka bulat
     const yc = 4 * f * xNorm * (1 - xNorm);
     const dycDx = 4 * (f / chord) * (1 - 2 * xNorm);
     const theta = Math.atan(dycDx);
 
-    // Taburan ketebalan nipis dengan LE bulat dan TE terkawal (teMinMm)
-    const ytBase = 0.5 * tMax * Math.sin(Math.PI * Math.pow(xNorm, 0.72));
-    const yt = Math.max(ytBase, 0.5 * teMinMm * Math.pow(xNorm, 0.4));
+    // Taburan ketebalan NACA 4-digit (hidung bulat tulen melalui sqrt(xNorm))
+    const x2 = xNorm * xNorm;
+    const x3 = x2 * xNorm;
+    const x4 = x2 * x2;
+    const ytNaca = (tMax / 0.2) * (
+      0.2969 * Math.sqrt(xNorm) -
+      0.1260 * xNorm -
+      0.3516 * x2 +
+      0.2843 * x3 -
+      0.1015 * x4
+    );
+
+    // Tambah sedikit ketebalan licin di TE sahaja untuk cetakan 3D / CAD
+    const yt = Math.max(0, ytNaca + 0.5 * teMinMm * x3);
 
     const sinT = Math.sin(theta);
     const cosT = Math.cos(theta);
@@ -109,7 +119,6 @@ export function generateThinAirfoil(chord, camberPct, thickPct, teMinMm, nPts = 
     lower.push({ x: x + yt * sinT, y: yc - yt * cosT });
   }
 
-  // Susun sebagai gelung tertutup: TE(atas) -> LE -> TE(bawah)
   const loop = [];
   for (let i = nPts; i >= 0; i--) loop.push(upper[i]);
   for (let i = 1; i <= nPts; i++) loop.push(lower[i]);
