@@ -1,7 +1,7 @@
 // Web Worker Enjin CAD (.STEP) berasaskan OpenCascade / Replicad
 import opencascade from 'replicad-opencascadejs/src/replicad_single.js';
 import opencascadeWasm from 'replicad-opencascadejs/src/replicad_single.wasm?url';
-import { setOC, getOC, makeCylinder, cast } from 'replicad';
+import { setOC, makeCylinder, cast, makeLine, assembleWire } from 'replicad';
 import { getRadii, getStationAero, getSweep, generateThinAirfoil, getGlobalMetrics } from './aeroMath.js';
 
 let ocReady = null;
@@ -18,33 +18,38 @@ async function initCAD() {
   return ocReady;
 }
 
-// Bina dawai tertutup bagi satu keratan bilah pada stesen u
+// Bina dawai tertutup menggunakan API rasmi replicad (makeLine + assembleWire)
 function makeSectionWire(oc, u, p) {
   const st = getStationAero(u, p);
   const camber = p.camberRoot + (p.camberTip - p.camberRoot) * u;
   const thick = p.thickRoot + (p.thickTip - p.thickRoot) * u;
   const sweep = getSweep(u, p);
 
-  const loop2D = generateThinAirfoil(st.chord, camber, thick, p.teMin, 18);
+  const loop2D = generateThinAirfoil(st.chord, camber, thick, p.teMin, 16);
   const twistRad = (st.twistDeg * Math.PI) / 180;
   const cosT = Math.cos(twistRad);
   const sinT = Math.sin(twistRad);
   const r = st.rMm;
 
-  const poly = new oc.BRepBuilderAPI_MakePolygon_1();
-  for (let i = 0; i < loop2D.length; i++) {
-    const { x, y } = loop2D[i];
+  const pts = loop2D.map(({ x, y }) => {
     const tang = x * cosT - y * sinT + sweep;
     const axial = x * sinT + y * cosT;
     const angle = tang / r;
-    const pnt = new oc.gp_Pnt_3(r * Math.cos(angle), r * Math.sin(angle), axial);
-    poly.Add_1(pnt);
-    pnt.delete();
+    return [r * Math.cos(angle), r * Math.sin(angle), axial];
+  });
+
+  const edges = [];
+  for (let i = 0; i < pts.length; i++) {
+    const p1 = pts[i];
+    const p2 = pts[(i + 1) % pts.length];
+    const dist = Math.hypot(p2[0] - p1[0], p2[1] - p1[1], p2[2] - p1[2]);
+    if (dist > 1e-4) {
+      edges.push(makeLine(p1, p2));
+    }
   }
-  poly.Close();
-  const wire = poly.Wire();
-  poly.delete();
-  return wire;
+
+  const wire = assembleWire(edges);
+  return wire.wrapped;
 }
 
 // Bina pepejal satu bilah menggunakan Loft NURBS (ThruSections)
