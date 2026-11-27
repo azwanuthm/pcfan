@@ -69,7 +69,7 @@ function buildBladeSolid(oc, p) {
 }
 
 self.onmessage = async (e) => {
-  const { mode, params: p } = e.data;
+const { mode, params: p, shroudParams: sp } = e.data;
   try {
     self.postMessage({ type: 'progress', message: 'Memuatkan enjin OpenCascade...' });
     const oc = await initCAD();
