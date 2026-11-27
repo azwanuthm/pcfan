@@ -25,7 +25,7 @@ function makeSectionWire(oc, u, p) {
   const thick = p.thickRoot + (p.thickTip - p.thickRoot) * u;
   const sweep = getSweep(u, p);
 
-  const loop2D = generateThinAirfoil(st.chord, camber, thick, p.teMin, 16);
+  const loop2D = generateThinAirfoil(st.chord, camber, thick, p.teMin, 24);
   const twistRad = (st.twistDeg * Math.PI) / 180;
   const cosT = Math.cos(twistRad);
   const sinT = Math.sin(twistRad);
