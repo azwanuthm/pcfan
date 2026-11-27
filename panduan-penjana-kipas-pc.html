@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="ms" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dokumentasi Kejuruteraan: Penjana Kipas Paksi Skala Kecil (40–140 mm)</title>
+  <!-- KaTeX untuk paparan persamaan matematik yang tajam -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" />
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+    onload="renderMathInElement(document.body, {
+      delimiters: [
+        {left: '$$', right: '$$', display: true},
+        {left: '$', right: '$', display: false}
+      ],
+      throwOnError: false
+    });"></script>
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --surface: #ffffff;
+      --text: #1e293b;
+      --muted: #475569;
+      --border: #e2e8f0;
+      --primary: #0284c7;
+      --primary-dark: #0369a1;
+      --primary-soft: #e0f2fe;
+      --accent: #0f172a;
+      --warn-bg: #fffbeb;
+      --warn-border: #fcd34d;
+      --warn-text: #92400e;
+      --ok-bg: #ecfdf5;
+      --ok-border: #6ee7b7;
+      --ok-text: #065f46;
+      --code-bg: #f1f5f9;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.68;
+      font-size: 15px;
+    }
+
+    /* Susun atur 2 lajur: Sidebar + Kandungan */
+    .layout {
+      display: grid;
+      grid-template-columns: 270px minmax(0, 1fr);
+      max-width: 1280px;
+      margin: 0 auto;
+      min-height: 100vh;
+    }
+
+    /* Sidebar Navigasi */
+    .sidebar {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      padding: 24px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+    .brand-badge {
+      display: inline-block;
+      background: var(--primary-soft);
+      color: var(--primary-dark);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: 999px;
+      margin-bottom: 8px;
+    }
+    .sidebar h2 {
+      font-size: 16px;
+      margin: 0 0 4px 0;
+      color: var(--accent);
+      line-height: 1.3;
+    }
+    .sidebar .sub {
+      font-size: 12px;
+      color: var(--muted);
+      margin: 0;
+    }
+    .nav-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .nav-list a {
+      display: block;
+      padding: 8px 12px;
+      border-radius: 8px;
+      text-decoration: none;
+      color: var(--muted);
+      font-size: 13.5px;
+      font-weight: 600;
+      transition: all 0.15s ease;
+    }
+    .nav-list a:hover, .nav-list a.active {
+      background: var(--primary-soft);
+      color: var(--primary-dark);
+    }
+    .sidebar-actions {
+      margin-top: auto;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 9px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--accent);
+      transition: 0.15s;
+      text-decoration: none;
+    }
+    .btn:hover { background: #f1f5f9; }
+    .btn-primary {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #ffffff;
+    }
+    .btn-primary:hover { background: var(--primary-dark); }
+
+    /* Kandungan Utama */
+    .main {
+      padding: 40px 48px 72px;
+      max-width: 960px;
+    }
+
+    header.hero {
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #0369a1 100%);
+      color: #ffffff;
+      border-radius: 16px;
+      padding: 32px 36px;
+      margin-bottom: 36px;
+      box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.15);
+    }
+    .hero-tag {
+      display: inline-block;
+      background: rgba(56, 189, 248, 0.2);
+      border: 1px solid rgba(56, 189, 248, 0.45);
+      color: #bae6fd;
+      font-size: 11.5px;
+      font-weight: 700;
+      padding: 4px 11px;
+      border-radius: 999px;
+      margin-bottom: 12px;
+      letter-spacing: 0.04em;
+    }
+    .hero h1 {
+      margin: 0 0 10px 0;
+      font-size: 28px;
+      line-height: 1.25;
+      letter-spacing: -0.02em;
+    }
+    .hero p {
+      margin: 0;
+      color: #cbd5e1;
+      font-size: 15px;
+      max-width: 720px;
+    }
+    .hero-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-top: 20px;
+      padding-top: 16px;
+      border-top: 1px solid rgba(255,255,255,0.14);
+      font-size: 12.5px;
+      color: #e2e8f0;
+    }
+
+    section {
+      margin-bottom: 44px;
+      scroll-margin-top: 24px;
+    }
+    h2.sec-title {
+      font-size: 21px;
+      color: var(--accent);
+      margin: 0 0 14px 0;
+      padding-bottom: 8px;
+      border-bottom: 2px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .sec-num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      background: var(--primary);
+      color: #fff;
+      font-size: 14px;
+      font-weight: 800;
+      flex-shrink: 0;
+    }
+    h3 {
+      font-size: 16.5px;
+      color: var(--accent);
+      margin: 22px 0 8px 0;
+    }
+    p { margin: 0 0 12px 0; }
+    ul, ol { margin: 0 0 14px 0; padding-left: 22px; }
+    li { margin-bottom: 6px; }
+
+    /* Kad & Kotak Maklumat */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 16px;
+      margin: 16px 0 20px;
+    }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 18px 20px;
+      box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+    }
+    .card h4 {
+      margin: 0 0 6px 0;
+      font-size: 14.5px;
+      color: var(--accent);
+    }
+    .card p { font-size: 13.5px; color: var(--muted); margin: 0; }
+
+    .callout {
+      border-radius: 12px;
+      padding: 15px 18px;
+      margin: 16px 0;
+      border-left: 4px solid var(--primary);
+      background: var(--primary-soft);
+      font-size: 14px;
+    }
+    .callout.warn {
+      border-left-color: #d97706;
+      background: var(--warn-bg);
+      color: var(--warn-text);
+    }
+    .callout.ok {
+      border-left-color: #059669;
+      background: var(--ok-bg);
+      color: var(--ok-text);
+    }
+    .callout strong { display: block; margin-bottom: 4px; }
+
+    /* Kotak Persamaan */
+    .eq-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px 20px;
+      margin: 14px 0;
+      overflow-x: auto;
+    }
+    .eq-label {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--primary-dark);
+      margin-bottom: 6px;
+    }
+    .eq-note {
+      font-size: 13px;
+      color: var(--muted);
+      margin-top: 8px;
+    }
+
+    /* Jadual */
+    .table-wrap {
+      overflow-x: auto;
+      margin: 16px 0;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13.5px;
+    }
+    th {
+      background: #0f172a;
+      color: #ffffff;
+      text-align: left;
+      padding: 11px 14px;
+      font-weight: 700;
+      font-size: 12.5px;
+      letter-spacing: 0.02em;
+    }
+    td {
+      padding: 10px 14px;
+      border-top: 1px solid var(--border);
+      vertical-align: top;
+    }
+    tr:nth-child(even) td { background: #f8fafc; }
+    code {
+      background: var(--code-bg);
+      padding: 2px 6px;
+      border-radius: 5px;
+      font-family: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
+      font-size: 12.5px;
+      color: #0f172a;
+    }
+
+    /* Rajah SVG */
+    .diagram-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 18px;
+      margin: 18px 0;
+      text-align: center;
+    }
+    .diagram-box svg {
+      max-width: 100%;
+      height: auto;
+    }
+    .diagram-caption {
+      font-size: 12.5px;
+      color: var(--muted);
+      margin-top: 10px;
+      font-style: italic;
+    }
+
+    /* Kad Pratetap */
+    .preset-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-top: 4px solid var(--primary);
+      border-radius: 12px;
+      padding: 18px;
+    }
+    .preset-card.p2 { border-top-color: #7c3aed; }
+    .preset-card.p3 { border-top-color: #ea580c; }
+    .preset-card.p4 { border-top-color: #059669; }
+    .preset-specs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin: 10px 0;
+    }
+    .pill {
+      font-size: 11.5px;
+      font-weight: 700;
+      background: #f1f5f9;
+      color: #334155;
+      padding: 3px 8px;
+      border-radius: 6px;
+    }
+
+    /* Langkah Aliran Kerja */
+    .step-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      margin: 16px 0;
+    }
+    .step-item {
+      display: flex;
+      gap: 14px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px 18px;
+    }
+    .step-badge {
+      width: 30px;
+      height: 30px;
+      border-radius: 999px;
+      background: var(--primary-soft);
+      color: var(--primary-dark);
+      font-weight: 800;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .step-item h4 { margin: 0 0 4px 0; font-size: 14.5px; color: var(--accent); }
+    .step-item p { margin: 0; font-size: 13.5px; color: var(--muted); }
+
+    footer {
+      margin-top: 48px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+      font-size: 12.5px;
+      color: var(--muted);
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    /* Responsif Mudah Alih */
+    @media (max-width: 900px) {
+      .layout { grid-template-columns: 1fr; }
+      .sidebar {
+        position: static;
+        height: auto;
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+      }
+      .main { padding: 24px 20px 48px; }
+    }
+
+    /* Mod Cetak / Simpan sebagai PDF */
+    @media print {
+      body { background: #fff; font-size: 12pt; }
+      .sidebar, .no-print { display: none !important; }
+      .layout { display: block; max-width: 100%; }
+      .main { padding: 0; max-width: 100%; }
+      header.hero {
+        background: #0f172a !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+      .card, .eq-box, .diagram-box, .step-item, .preset-card {
+        break-inside: avoid;
+      }
+      section { break-inside: auto; }
+    }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <!-- Sidebar Navigasi -->
+    <aside class="sidebar">
+      <div>
+        <span class="brand-badge">Dokumentasi P&amp;P</span>
+        <h2>Penjana Kipas Paksi Skala Kecil</h2>
+        <p class="sub">Falsafah Reka Bentuk, Matematik <em>Low-Re</em> &amp; Panduan Makmal (40–140 mm)</p>
+      </div>
+
+      <nav>
+        <ul class="nav-list">
+          <li><a href="#falsafah">1. Falsafah Reka Bentuk</a></li>
+          <li><a href="#matematik">2. Model Matematik &amp; Fizik</a></li>
+          <li><a href="#kamus">3. Kamus Parameter &amp; Trade-Off</a></li>
+          <li><a href="#pratetap">4. Rasional 4 Pratetap Industri</a></li>
+          <li><a href="#aliran">5. Aliran Kerja SWFS &amp; 3D Print</a></li>
+          <li><a href="#batasan">6. Batasan Model &amp; Skop</a></li>
+        </ul>
+      </nav>
+
+      <div class="sidebar-actions no-print">
+        <button class="btn btn-primary" onclick="window.print()">Cetak / Simpan sebagai PDF</button>
+        <a class="btn" href="#top">Kembali ke Atas</a>
+      </div>
+    </aside>
+
+    <!-- Kandungan Utama -->
+    <main class="main" id="top">
+      <header class="hero">
+        <span class="hero-tag">KEJURUTERAAN TERMO-BENDALIR • REKA BENTUK BERBANTU KOMPUTER (CAD)</span>
+        <h1>Falsafah Reka Bentuk &amp; Panduan Teknikal Penjana Kipas Paksi Skala Kecil</h1>
+        <p>Dokumen rujukan rasmi bagi memahami fizik aerodinamik <em>Low Reynolds Number</em> ($Re_c &lt; 10^5$), persamaan terbitan di sebalik enjin <code>aeroMath.js</code>, serta aliran kerja kejuruteraan daripada reka bentuk parametrik ke simulasi SolidWorks Flow Simulation (SWFS) dan prototaip cetakan 3D.</p>
+        <div class="hero-meta">
+          <span><strong>Skala Sasaran:</strong> 40 mm – 140 mm (PC, GPU &amp; Elektronik)</span>
+          <span><strong>Format Eksport:</strong> .STEP (NURBS), .STL, .OBJ &amp; _Params.txt</span>
+          <span><strong>Versi Aplikasi:</strong> Fasa 1 (MVP Rotor)</span>
+        </div>
+      </header>
+
+      <!-- BAHAGIAN 1 -->
+      <section id="falsafah">
+        <h2 class="sec-title"><span class="sec-num">1</span> Falsafah Reka Bentuk &amp; Skop Aplikasi</h2>
+        <p>Kipas penyejuk bersaiz kecil (40 mm hingga 140 mm) beroperasi dalam regim bendalir yang jauh berbeza berbanding kipas industri HVAC atau kipas pesawat. Apabila formula reka bentuk kipas besar ($D &gt; 400\text{ mm}$) digunakan terus pada skala PC, geometri yang terhasil sering terlalu tebal, gagal mematuhi had casis, dan mengalami kehilangan tekanan yang tinggi akibat kesan kelikatan udara.</p>
+
+        <div class="card-grid">
+          <div class="card">
+            <h4>1. Regim Low Reynolds Number ($Re_c &lt; 10^5$)</h4>
+            <p>Kipas 120 mm pada 1,800 RPM mempunyai $Re_c \approx 1.5\times 10^4 - 6\times 10^4$. Pada julat ini, aerofoil tebal (seperti NACA 4412 atau C4 industri) mudah mengalami <em>Laminar Separation Bubbles</em> (LSB) dan <em>stall</em> awal. Generator ini menggunakan <strong>profil arka bulat nipis (ketebalan 3%–6%)</strong> dengan hidung membulat piawai NACA.</p>
+          </div>
+          <div class="card">
+            <h4>2. Kekangan Fizikal Casis (Auto-Clamping)</h4>
+            <p>Kipas PC terikat ketat dengan piawaian ketebalan bingkai (15 mm <em>slim</em>, 25 mm <em>standard</em>, dan 30 mm <em>performance</em>). Generator secara automatik mengehadkan panjang kord supaya bilah sentiasa muat di dalam ruang paksi bingkai dengan kelegaan keselamatan 2.5 mm.</p>
+          </div>
+          <div class="card">
+            <h4>3. Reka Bentuk-ke-Prototaip (DfM)</h4>
+            <p>Model bukan sekadar untuk visualisasi. Ketebalan minimum <em>Trailing Edge</em> ($\ge 0.5\text{ mm}$) dan pilihan <strong>Barrier Ring</strong> (gelang hujung gaya GPU) dimasukkan khusus supaya rotor cukup tegar untuk dicetak 3D (resin SLA) tanpa melentur atau retak di bawah beban emparan.</p>
+          </div>
+        </div>
+
+        <div class="diagram-box">
+          <svg viewBox="0 0 760 220" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Rajah Profil Nipis Low-Re dan Segi Tiga Halaju">
+            <defs>
+              <marker id="arrBlue" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+                <path d="M0,0 L0,6 L7,3 z" fill="#0284c7" />
+              </marker>
+              <marker id="arrGreen" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+                <path d="M0,0 L0,6 L7,3 z" fill="#059669" />
+              </marker>
+              <marker id="arrIndigo" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+                <path d="M0,0 L0,6 L7,3 z" fill="#4f46e5" />
+              </marker>
+            </defs>
+
+            <!-- Kiri: Profil Thin Circular-Arc -->
+            <rect x="10" y="10" width="350" height="200" rx="10" fill="#f8fafc" stroke="#e2e8f0" />
+            <text x="185" y="32" text-anchor="middle" font-size="13" font-weight="700" fill="#0f172a">Profil Thin Circular-Arc (Hidung NACA)</text>
+            <!-- Garisan Kord -->
+            <line x1="50" y1="138" x2="315" y2="138" stroke="#94a3b8" stroke-dasharray="5,4" stroke-width="1.5" />
+            <!-- Bentuk Aerofoil -->
+            <path d="M 52 138 C 52 118, 125 82, 200 88 C 255 92, 295 118, 315 135 L 315 141 C 285 128, 240 110, 185 109 C 125 108, 70 128, 52 138 Z" fill="#bae6fd" stroke="#0284c7" stroke-width="2.2" />
+            <!-- Label LE & TE -->
+            <circle cx="52" cy="138" r="3.5" fill="#0f172a" />
+            <text x="36" y="160" font-size="11" font-weight="700" fill="#0f172a">LE (Bulat)</text>
+            <text x="36" y="173" font-size="10" fill="#475569">√x NACA</text>
+
+            <circle cx="315" cy="138" r="3.5" fill="#0f172a" />
+            <text x="275" y="160" font-size="11" font-weight="700" fill="#0f172a">TE (teMin)</text>
+            <text x="275" y="173" font-size="10" fill="#475569">≥ 0.5 mm SLA</text>
+
+            <!-- Label Camber & Tebal -->
+            <line x1="185" y1="138" x2="185" y2="98" stroke="#dc2626" stroke-width="1.5" />
+            <text x="192" y="122" font-size="11" font-weight="700" fill="#dc2626">Camber (f)</text>
+            <text x="145" y="195" font-size="11" fill="#475569">Kord (c) • Nisbah tebal t/c = 3% – 6%</text>
+
+            <!-- Kanan: Segi Tiga Halaju -->
+            <rect x="385" y="10" width="365" height="200" rx="10" fill="#f8fafc" stroke="#e2e8f0" />
+            <text x="568" y="32" text-anchor="middle" font-size="13" font-weight="700" fill="#0f172a">Segi Tiga Halaju &amp; Sudut Twist (θ)</text>
+
+            <!-- U (Tangen) -->
+            <line x1="430" y1="165" x2="665" y2="165" stroke="#0284c7" stroke-width="2.8" marker-end="url(#arrBlue)" />
+            <text x="545" y="185" text-anchor="middle" font-size="12" font-weight="700" fill="#0284c7">U(r) = ω · r (Laju Putaran)</text>
+
+            <!-- Vz (Paksi) -->
+            <line x1="672" y1="165" x2="672" y2="75" stroke="#059669" stroke-width="2.8" marker-end="url(#arrGreen)" />
+            <text x="682" y="122" font-size="12" font-weight="700" fill="#059669">Vz</text>
+            <text x="682" y="136" font-size="10" fill="#475569">(Paksi)</text>
+
+            <!-- W (Relatif) -->
+            <line x1="430" y1="165" x2="666" y2="73" stroke="#4f46e5" stroke-width="2.8" marker-end="url(#arrIndigo)" />
+            <text x="520" y="110" font-size="12" font-weight="700" fill="#4f46e5" transform="rotate(-21, 520, 110)">W(r) = √(U² + Vz²)</text>
+
+            <!-- Garisan Kord Bilah (Sudut theta = beta + alpha) -->
+            <line x1="430" y1="165" x2="635" y2="48" stroke="#ea580c" stroke-width="2" stroke-dasharray="6,3" />
+            <text x="580" y="56" font-size="11" font-weight="700" fill="#ea580c">Kord Bilah (θ = β + α)</text>
+
+            <!-- Sudut beta & alpha -->
+            <path d="M 488 165 A 58 58 0 0 0 484 144" fill="none" stroke="#4f46e5" stroke-width="1.5" />
+            <text x="495" y="158" font-size="11" font-weight="700" fill="#4f46e5">β</text>
+            <path d="M 505 135 A 80 80 0 0 0 499 125" fill="none" stroke="#ea580c" stroke-width="1.5" />
+            <text x="512" y="132" font-size="11" font-weight="700" fill="#ea580c">α</text>
+          </svg>
+          <div class="diagram-caption">Rajah 1: Keratan aerofoil nipis dengan hidung bulat NACA (kiri) dan hubungan sudut aliran $\beta$, sudut serangan $\alpha$, serta sudut pilinan bilah $\theta$ (kanan).</div>
+        </div>
+      </section>
+
+      <!-- BAHAGIAN 2 -->
+      <section id="matematik">
+        <h2 class="sec-title"><span class="sec-num">2</span> Model Matematik &amp; Andaian Fizikal (<code>aeroMath.js</code>)</h2>
+        <p>Semua pengiraan dalam aplikasi dilaksanakan secara masa nyata pada suhu bilik piawai (~25 °C) dengan sifat udara tetap: ketumpatan $\rho = 1.184\text{ kg/m}^3$, kelikatan dinamik $\mu = 1.849\times 10^{-5}\text{ Pa}\cdot\text{s}$, dan muatan haba tentu $c_p = 1007\text{ J/(kg}\cdot\text{K)}$.</p>
+
+        <h3>2.1 Dimensi Jejari &amp; Had Ketebalan Bingkai</h3>
+        <div class="eq-box">
+          <div class="eq-label">Jejari Hujung &amp; Hab</div>
+          $$r_{\text{tip}} = \frac{D_{\text{frame}}}{2} - t_{\text{wall}} - \delta_{\text{tip}}, \qquad r_{\text{hub}} = r_{\text{tip}} \cdot \left(\frac{d_h}{d_t}\right)$$
+          <div class="eq-note">Dengan ketebalan dinding bingkai $t_{\text{wall}} = 2.0\text{ mm}$ bagi kipas $\le 60\text{ mm}$ dan $2.5\text{ mm}$ bagi kipas $\ge 80\text{ mm}$. Stesen jejari tak berdimensi ditakrifkan sebagai $u \in [0, 1]$ dari hab ke hujung: $r(u) = r_{\text{hub}} + u(r_{\text{tip}} - r_{\text{hub}})$.</div>
+        </div>
+
+        <div class="eq-box">
+          <div class="eq-label">Taburan Kord &amp; Kekangan Paksi (Auto-Clamping)</div>
+          $$c(u) = c_{\text{root}}\bigl(1 + (\text{Taper} - 1)\,u\bigr) + c_{\text{root}} \cdot \text{Bulge} \cdot \sin(\pi u)$$
+          $$c_{\text{eff}}(u) = \min\!\left(c(u),\; \frac{D_{\text{depth}} - 2.5}{\sin\theta(u)}\right)$$
+          <div class="eq-note">Jika unjuran paksi bilah $c\sin\theta$ melebihi ruang dalaman bingkai ($D_{\text{depth}} - 2.5\text{ mm}$), enjin mengehadkan kord secara automatik dan memaparkan amaran kuning di panel kawalan.</div>
+        </div>
+
+        <h3>2.2 Segi Tiga Halaju, Free Vortex &amp; Pengesanan Stall</h3>
+        <div class="eq-box">
+          <div class="eq-label">Aerodinamik Stesen Tempatan (BEM 1D)</div>
+          $$U(r) = \omega r = \frac{2\pi N}{60}\,r, \qquad W(r) = \sqrt{U(r)^2 + V_z^2}, \qquad \beta(r) = \arctan\!\left(\frac{V_z}{U(r)}\right)$$
+          $$\theta_{\text{auto}}(r) = \beta(r) + \alpha \quad \text{(dihadkan dalam } 8^\circ \le \theta \le 72^\circ\text{)}$$
+          <div class="eq-note">Oleh kerana $U(r)$ meningkat secara linear ke arah hujung bilah manakala $V_z$ diandaikan seragam, sudut aliran $\beta(r)$ curam di hab dan landai di hujung. Mod <strong>Auto-Twist (Free Vortex)</strong> mengekalkan sudut serangan $\alpha$ yang optimum sepanjang rentang. Amaran <strong>RISIKO STALL</strong> dipaparkan jika $\alpha &gt; 10.5^\circ$ atau $\alpha &lt; -1.0^\circ$.</div>
+        </div>
+
+        <h3>2.3 Profil Sapuan (Sweep), Reynolds &amp; Solidity</h3>
+        <div class="eq-box">
+          <div class="eq-label">Fungsi Sapuan Tangensial $S(u)$</div>
+          $$S_{\text{forward}}(u) = A \cdot u^{1.55}, \qquad S_{\text{progressive}}(u) = A \Bigl(-0.45\sin(\pi u) + 1.15\,u^{2.2}\Bigr)$$
+          <div class="eq-note">Mod <strong>Progressive Bend</strong> (inspirasi Noctua G2) menyapu sedikit ke belakang di zon pangkal untuk menolak udara bertenaga rendah keluar dari zon mati hab, sebelum melengkung ke hadapan di bahagian hujung bagi mengurangkan pusaran tip (<em>tip vortex</em>).</div>
+        </div>
+
+        <div class="eq-box">
+          <div class="eq-label">Nombor Reynolds Tempatan &amp; Cascade Solidity</div>
+          $$Re_c(u) = \frac{\rho\, W(u)\, c(u)}{\mu}, \qquad \sigma(u) = \frac{Z \cdot c(u)}{2\pi r(u)}$$
+          <div class="eq-note">Solidity $\sigma &gt; 1.0$ (100%) bermakna bilah bertindih secara paksi—ciri penting untuk kipas tekanan statik tinggi supaya udara tidak bocor balik ke salur masuk.</div>
+        </div>
+
+        <h3>2.4 Gandingan Pemindahan Haba &amp; Aeroakustik Asas</h3>
+        <div class="eq-box">
+          <div class="eq-label">Kadar Aliran Diperlukan bagi Beban Haba &amp; Hingar Tonal BPF</div>
+          $$Q_{\text{req}} = \frac{\dot{Q}_{\text{heat}}}{\rho\, c_p\, \Delta T_{\text{air}}}, \qquad \text{Margin Haba} = \frac{Q_{\text{kipas}} - Q_{\text{req}}}{Q_{\text{req}}} \times 100\%$$
+          $$f_{\text{BPF}} = \frac{Z \cdot N}{60} \;\text{(Hz)}$$
+          <div class="eq-note">Dengan $Q_{\text{kipas}} = \pi (r_{\text{tip}}^2 - r_{\text{hub}}^2) V_z$. Frekuensi <em>Blade Passing Frequency</em> ($f_{\text{BPF}}$) menunjukkan nada asas bunyi dengungan kipas apabila bilah memotong topang stator atau sirip heatsink.</div>
+        </div>
+      </section>
+
+      <!-- BAHAGIAN 3 -->
+      <section id="kamus">
+        <h2 class="sec-title"><span class="sec-num">3</span> Kamus Parameter &amp; <em>Trade-Off</em> Kejuruteraan</h2>
+        <p>Jadual di bawah merumuskan setiap parameter input di panel kawalan berserta julat praktikal dan kesan fizikalnya terhadap prestasi aliran, tekanan statik, dan bunyi.</p>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th style="width:22%">Parameter</th>
+                <th style="width:16%">Julat Realistik</th>
+                <th style="width:62%">Maksud Fizikal &amp; <em>Trade-Off</em> Kejuruteraan</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Saiz &amp; Ketebalan Bingkai</strong><br><code>frameSize</code>, <code>frameDepth</code></td>
+                <td>40–140 mm<br>15 / 25 / 30 mm</td>
+                <td>Menentukan saiz casis piawai. Ketebalan <strong>30 mm</strong> membenarkan kord lebih lebar tanpa <em>clamping</em>, sekali gus meningkatkan tekanan statik dengan ketara berbanding profil <em>slim</em> 15 mm.</td>
+              </tr>
+              <tr>
+                <td><strong>Kelegaan Hujung</strong><br><code>tipClearance</code></td>
+                <td>0.5 mm (LCP/CFD)<br>0.8–1.0 mm (SLA)</td>
+                <td>Jurang jejari antara hujung bilah dan dinding shroud. Jurang besar menyebabkan kebocoran tekanan balik (<em>tip leakage vortex</em>), tetapi jurang terlalu sempit (&lt;0.8 mm) berisiko bergesel pada cetakan 3D.</td>
+              </tr>
+              <tr>
+                <td><strong>Nisbah Hab ($d_h/d_t$)</strong><br><code>hubRatio</code></td>
+                <td>0.30–0.35 (Airflow)<br>0.38–0.45 (Pressure)</td>
+                <td>Hab lebih besar memuatkan motor BLDC berdaya kilas tinggi dan menyingkirkan zon aliran balik di tengah, tetapi mengecilkan luas anulus aliran udara bebas.</td>
+              </tr>
+              <tr>
+                <td><strong>Bilangan Bilah ($Z$)</strong><br><code>blades</code></td>
+                <td>5–7 (Tekanan)<br>7–9 (Hibrid/GPU)</td>
+                <td>Menambah bilah menaikkan <em>solidity</em>, tetapi pada $Re$ rendah terlalu banyak bilah (&gt;11) menambah seretan kelikatan, menyekat aliran bebas, dan menaikkan frekuensi BPF ke julat telinga paling sensitif (1–4 kHz).</td>
+              </tr>
+              <tr>
+                <td><strong>Kelajuan Motor ($N$)</strong><br><code>rpm</code></td>
+                <td>1,000–2,200 (120mm)<br>2,500–4,500 (60mm)</td>
+                <td>Mengikut Hukum Afiniti: $Q \propto N$, $\Delta P \propto N^2$, kuasa aci $\propto N^3$, dan kuasa akustik $\propto N^5\text{–}N^6$. Menggandakan RPM hanya menggandakan aliran tetapi melonjakkan hingar sebanyak +15 hingga +18 dB.</td>
+              </tr>
+              <tr>
+                <td><strong>Sudut Serangan ($\alpha$)</strong><br><code>aoa</code></td>
+                <td>4.0° – 7.5°</td>
+                <td>Sudut antara garisan kord dengan aliran relatif $W$. Julat 5°–6° memberi nisbah angkatan-ke-seretan ($C_L/C_D$) terbaik bagi aerofoil nipis; melebihi 10° mengundang <em>thin-airfoil stall</em>.</td>
+              </tr>
+              <tr>
+                <td><strong>Kord, Taper &amp; Bulge</strong><br><code>rootChord</code>, <code>taper</code></td>
+                <td>Taper: 1.15–1.35×<br>Bulge: 0.20–0.35×</td>
+                <td>Mengawal luas permukaan bilah dan <em>solidity</em>. Bilah lebar yang bertindih lebih cekap menentang rintangan radiator, manakala bilah tirus lebih senyap dalam casis terbuka.</td>
+              </tr>
+              <tr>
+                <td><strong>Mod Sapuan</strong><br><code>sweepMode</code>, <code>sweepAmp</code></td>
+                <td>Progressive / Forward<br>5–14 mm</td>
+                <td>Sapuan ke hadapan (<em>forward sweep</em>) mengurangkan intensiti pusaran tip dan hingar jalur lebar (<em>broadband</em>), manakala <em>Progressive Bend</em> mengimbangi aliran di pangkal hab dan hujung bilah.</td>
+              </tr>
+              <tr>
+                <td><strong>Camber &amp; Ketebalan</strong><br><code>camber</code>, <code>thick</code></td>
+                <td>Camber: 5%–9%<br>Tebal: 3.5%–6.0%</td>
+                <td>Camber lebih tinggi di pangkal membantu menjana tekanan walaupun laju $U(r)$ rendah. Ketebalan 3.5%–6% mengelakkan pembentukan gelembung pemisahan laminar (LSB).</td>
+              </tr>
+              <tr>
+                <td><strong>Tebal Min. TE</strong><br><code>teMin</code></td>
+                <td>0.5–0.6 mm (SLA)<br>0.8–1.0 mm (FDM)</td>
+                <td>Menetapkan ketebalan fizikal pinggir belakang supaya fail CAD bebas ralat geometri dan boleh dicetak 3D tanpa koyak semasa proses penanggalan sokongan.</td>
+              </tr>
+              <tr>
+                <td><strong>Barrier Ring (GPU)</strong><br><code>barrierRing</code></td>
+                <td>Tebal gelang:<br>1.0–1.5 mm</td>
+                <td>Menyambungkan semua hujung bilah dengan gelang luar. Menghapuskan pusaran hujung terbuka dan meningkatkan ketegaran struktur—sangat digalakkan untuk prototaip cetakan 3D bersaiz slim/mini.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- BAHAGIAN 4 -->
+      <section id="pratetap">
+        <h2 class="sec-title"><span class="sec-num">4</span> Rasional 4 Pratetap Rujukan Industri</h2>
+        <p>Empat pratetap terbina dalam <code>presets.js</code> direka berasaskan penanda aras industri (2020–2026) supaya pelajar dapat terus membandingkan geometri berbeza untuk impeden sistem yang berlainan.</p>
+
+        <div class="card-grid">
+          <div class="preset-card">
+            <h4>Hybrid 120mm (Gaya NF-A12x25 G2)</h4>
+            <div class="preset-specs">
+              <span class="pill">120×25 mm</span>
+              <span class="pill">9 Bilah</span>
+              <span class="pill">Progressive Bend</span>
+              <span class="pill">Gap 0.5 mm</span>
+            </div>
+            <p>Dioptimumkan pada bahagian tengah lengkung P–Q. Gabungan 9 bilah dan sapuan <em>Progressive Bend</em> menjadikannya rujukan serba boleh untuk penyejuk menara (<em>air cooler</em>) dan radiator sederhana.</p>
+          </div>
+
+          <div class="preset-card p2">
+            <h4>Radiator 30mm (Gaya Phanteks T30)</h4>
+            <div class="preset-specs">
+              <span class="pill">120×30 mm</span>
+              <span class="pill">7 Bilah Lebar</span>
+              <span class="pill">Forward Sweep</span>
+              <span class="pill">Solidity Tinggi</span>
+            </div>
+            <p>Memanfaatkan tambahan kedalaman +5 mm (30 mm) untuk menampung kord lebih lebar dan tekanan statik tinggi—sesuai bagi radiator berketumpatan tinggi (20–30 FPI) dan penapis habuk tebal.</p>
+          </div>
+
+          <div class="preset-card p3">
+            <h4>GPU 92mm (Gaya Axial-Tech Ring)</h4>
+            <div class="preset-specs">
+              <span class="pill">92×15 mm Slim</span>
+              <span class="pill">9 Bilah</span>
+              <span class="pill">Barrier Ring Aktif</span>
+              <span class="pill">2,400 RPM</span>
+            </div>
+            <p>Mewakili kekangan ruang nipis kad grafik. <em>Barrier Ring</em> mengunci semua hujung bilah bagi menghalang aliran terlepas secara jejari dan memaksa udara masuk terus ke celah sirip heatsink.</p>
+          </div>
+
+          <div class="preset-card p4">
+            <h4>Mini 60mm (Sedia Cetakan SLA)</h4>
+            <div class="preset-specs">
+              <span class="pill">60×25 mm</span>
+              <span class="pill">7 Bilah</span>
+              <span class="pill">Gap 0.8 mm</span>
+              <span class="pill">TE 0.6 mm</span>
+            </div>
+            <p>Direka khusus untuk projek makmal universiti yang dipadankan dengan heatsink 60×60 mm. Dilengkapi <em>Barrier Ring</em> dan had toleransi cetakan resin SLA supaya terus sedia diuji pada motor BLDC 12V.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- BAHAGIAN 5 -->
+      <section id="aliran">
+        <h2 class="sec-title"><span class="sec-num">5</span> Aliran Kerja ke SolidWorks (SWFS) &amp; Cetakan 3D</h2>
+        <p>Dalam tugasan makmal, generator menghasilkan geometri bilah berpilin yang kompleks, manakala pelajar melengkapkan reka bentuk mekanikal bingkai dan mengesahkan prestasinya melalui CFD atau eksperimen fizikal.</p>
+
+        <div class="step-list">
+          <div class="step-item">
+            <div class="step-badge">1</div>
+            <div>
+              <h4>Jana &amp; Eksport Rotor (<code>.STEP</code> + <code>_Params.txt</code>)</h4>
+              <p>Tetapkan sasaran beban haba ($\dot{Q}_{\text{heat}}$) dan $\Delta T$ terlebih dahulu sehingga margin penyejukan positif. Klik <strong>STEP: Rotor</strong> untuk memuat turun model pepejal NURBS berserta fail rekod parameter automatik (<code>_Params.txt</code>) yang mengandungi nilai $\omega$ (rad/s) dan dimensi rujukan.</p>
+            </div>
+          </div>
+
+          <div class="step-item">
+            <div class="step-badge">2</div>
+            <div>
+              <h4>Lukis Bingkai (<em>Shroud</em>) &amp; Topang Stator di SolidWorks</h4>
+              <p>Buka fail <code>.STEP</code> rotor dalam SolidWorks dan bina komponen bingkai berasingan dalam satu <em>Assembly</em>. Pastikan diameter lubang dalam bingkai mematuhi $D_{\text{bore}} = 2(r_{\text{tip}} + \delta_{\text{tip}})$. Gunakan <strong>nisbah nombor perdana</strong> antara bilah dan topang stator (contoh: 7 atau 9 bilah dengan 4 topang melengkung) untuk mengelakkan gangguan akustik serentak.</p>
+            </div>
+          </div>
+
+          <div class="step-item">
+            <div class="step-badge">3</div>
+            <div>
+              <h4>Simulasi SolidWorks Flow Simulation (SWFS)</h4>
+              <p>Bina satu silinder lutsinar (<em>dummy solid</em>) yang merangkumi keseluruhan rotor sebagai <strong>Local Rotating Region</strong> (mod <em>Averaging</em> atau <em>Sliding</em>) dan masukkan halaju sudut $\omega$ dari fail <code>_Params.txt</code>. Kekalkan bingkai dan topang sebagai jasad pegun. Ubah tekanan statik salur keluar dari $0\text{ Pa}$ ke tekanan <em>shut-off</em> untuk memplot lengkung P–Q maya.</p>
+            </div>
+          </div>
+
+          <div class="step-item">
+            <div class="step-badge">4</div>
+            <div>
+              <h4>Prototaip Cetakan 3D (SLA Disyorkan) &amp; Imbangan Statik</h4>
+              <p>Eksport <strong>STL: Rotor (SLA)</strong>. Gunakan pencetak resin <strong>SLA/MSLA</strong> dengan <em>Tough</em> atau <em>Engineering Resin</em> (elakkan resin piawai yang rapuh atau FDM biasa kerana lapisan kasar mencetuskan perolakan gelora awal). Sebelum menguji pada motor BLDC penderma, lakukan imbangan statik pada <em>magnetic prop balancer</em> menggunakan titisan kecil resin UV pada pangkal bilah yang lebih ringan.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="callout ok">
+          <strong>Tip Pedagogi untuk Laporan Makmal:</strong>
+          Minta pelajar membandingkan dua variasi reka bentuk pada <strong>paras hingar atau RPM yang sama</strong> (contoh: 7 bilah vs 9 bilah, atau dengan/tanpa <em>Barrier Ring</em>) terhadap satu rintangan heatsink tetap, kemudian plotkan kedua-dua lengkung P–Q di atas graf yang sama.
+        </div>
+      </section>
+
+      <!-- BAHAGIAN 6 -->
+      <section id="batasan">
+        <h2 class="sec-title"><span class="sec-num">6</span> Batasan Model (<em>Limitations &amp; Scope</em>)</h2>
+        <p>Bagi memastikan ketelusan saintifik dalam penulisan laporan makmal dan penyelidikan, pelajar wajib memahami andaian penyederhanaan yang digunakan oleh generator ini:</p>
+
+        <ul>
+          <li><strong>Aliran Paksi 1D Seragam:</strong> Enjin <code>aeroMath.js</code> mengandaikan halaju paksi $V_z$ adalah seragam dari hab ke hujung bilah. Dalam aliran 3D sebenar, wujud komponen halaju jejari, pengecutan lapisan sempadan pada dinding shroud, dan zon pusaran balik di sekitar hab.</li>
+          <li><strong>Tiada Pemodelan Kebocoran Hujung &amp; Stall Dinamik:</strong> Nilai CFM yang dipaparkan ialah anggaran kinematik berasaskan luas anulus ($Q = A_{\text{annulus}} V_z$), bukan penyelesaian persamaan Navier–Stokes. Kesan sebenar <em>tip clearance</em>, <em>Laminar Separation Bubbles</em>, dan rintangan heatsink (lengkung impeden sistem) mesti disahkan melalui SWFS atau ujian rig P–Q.</li>
+          <li><strong>Analisis Struktur &amp; Emparan Tidak Disertakan:</strong> Generator tidak mengira tegasan lenturan emparan atau rayapan polimer (<em>creep</em>). Pengguna perlu memastikan ketebalan pangkal bilah dan bahan cetakan memadai jika menguji pada kelajuan tinggi ($&gt; 3,000\text{ RPM}$).</li>
+          <li><strong>Aeroakustik Terhad kepada BPF Asas:</strong> Aplikasi hanya mengira frekuensi tonal asas ($f_{\text{BPF}}$). Ramalan tahap tekanan bunyi sebenar (dBA) dan hingar jalur lebar memerlukan model akustik CFD (Proudman / Curle / FW-H) atau pengukuran mikrofon FFT.</li>
+        </ul>
+
+        <div class="callout warn">
+          <strong>Kenapa Batasan Ini Penting dalam Pembelajaran?</strong>
+          Perbezaan antara anggaran 1D daripada generator dengan keputusan sebenar daripada SWFS atau terowong angin makmal bukanlah satu "ralat"—sebaliknya ia merupakan titik perbincangan kejuruteraan paling bernilai untuk menerangkan kesan kehilangan kelikatan, kebocoran hujung, dan pemisahan aliran 3D.
+        </div>
+      </section>
+
+      <footer>
+        <span>Dokumentasi Teknikal • Penjana Kipas Paksi Skala Kecil (40–140 mm)</span>
+        <span>Sedia untuk kegunaan kuliah, makmal P&amp;P &amp; rujukan projek pelajar</span>
+      </footer>
+    </main>
+  </div>
+
+  <script>
+    // Serlahkan pautan navigasi aktif semasa menatal halaman
+    const sections = document.querySelectorAll('section[id]');
+    const navLinks = document.querySelectorAll('.nav-list a');
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          navLinks.forEach((link) => {
+            link.classList.toggle('active', link.getAttribute('href') === '#' + entry.target.id);
+          });
+        }
+      });
+    }, { rootMargin: '-20% 0px -65% 0px' });
+
+    sections.forEach((sec) => observer.observe(sec));
+  </script>
+</body>
+</html>
